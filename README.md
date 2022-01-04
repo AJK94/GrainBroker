@@ -53,6 +53,7 @@ research.
 Database 
 </summary>
 <p>
+
 The database will be a SQL database as I think the data provided can be split into a relational database and reduce the repetition of data storage
 
 I have decided to split the data into the following tables PurchaseOrder, Customer, Supplier and Location. 
@@ -70,6 +71,7 @@ To recreate the database, you will need to create a new SQL database [GrainBroke
 Domain
 </summary>
 <p>
+    
 The domain uses Entity Framework to connect to the database. All queries to the database through EF use linq as the queries aren’t complex.
 If complex queries were required, stored procedures could be considered. 
 
@@ -86,6 +88,7 @@ This would mean that the services project can be strictly business logic and als
 Services
 </summary>
 <p>
+    
 The services project is where we will be completing most of our business logic and data transformation (as the charts may require different structures than the database table structure).
 
 The services project could also contain the cache service which utilises Redis. This service will be used to cache large database requests e.g. get all orders
@@ -104,6 +107,7 @@ Live updates may not be required if orders are not inserted often.
 API 
 </summary>
 <p>
+    
 The API is a simple .net 6 API, this was chosen as it's easy to set up, easy to maintain and .net 6 has a long support lifetime. 
 
 The API has one endpoint setup for all purchase order information. 
@@ -118,6 +122,7 @@ The API currently has no authentication but we could easily add RBAC using Micro
 Front End 
 </summary>
 <p>
+    
 The front end will be written in Vue.
 Vue is great for small to medium size projects as it's lightweight, easy to set up and easy to learn (especially for developers who have used other javascript frameworks).
 
@@ -142,6 +147,7 @@ Depending on the client needs, we can add signal R for live updates (This is dis
 Importer 
 </summary>
 <p>
+    
 The importer is a worker service written in .net 6, this could be run when ad hoc or on a schedule using a cron job.
 
 The importer currently just pulls from a CSV in GrainBroker.Importer/ImportData and uses the CSVHelper library to import the data.
@@ -155,6 +161,7 @@ We could also easily convert this functionality into a front end CSV uploader or
 Tests 
 </summary>
 <p>
+    
 The tests are written in Xunit and Moq. The test classes are split into API, Services and Domain. I have split them down so we can test all the functionality individually,
 
 With more time I would also add full regression tests that would go from the API to the domain without using Moq.
@@ -162,8 +169,3 @@ With more time I would also add full regression tests that would go from the API
 The tests are very useful for recognising if new code affects the current code base, it would be very useful to check code coverage on pull requests with a tool such as SonarQube.
 </p>
 </details>
-
- 
-
-
-
