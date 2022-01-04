@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrainBroker.Tests", "GrainBroker.Tests\GrainBroker.Tests.csproj", "{A06A6F51-FD60-4EAF-8E96-EA58ECF93727}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrainBroker.Services", "GrainBroker.Services\GrainBroker.Services.csproj", "{D7C7CCA2-7777-465F-B2CF-A3364C5CE6A5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrainBroker.Domain", "GrainBroker.Domain\GrainBroker.Domain.csproj", "{39FC718D-8658-40B2-BDC7-19FE8DF9F8D6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrainBroker.Importer", "GrainBroker.Importer\GrainBroker.Importer.csproj", "{2F562C6C-64A6-49DD-8A2F-A41DEFC68D45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrainBroker.API", "GrainBroker.API\GrainBroker.API.csproj", "{021F2EC8-6C48-497C-A51A-9CC8AD7ABB5F}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "GrainBroker.Database", "GrainBroker.Database\GrainBroker.Database.sqlproj", "{CD067A00-53BE-44FC-8247-4B6771C75EC6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A06A6F51-FD60-4EAF-8E96-EA58ECF93727}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A06A6F51-FD60-4EAF-8E96-EA58ECF93727}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A06A6F51-FD60-4EAF-8E96-EA58ECF93727}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A06A6F51-FD60-4EAF-8E96-EA58ECF93727}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7C7CCA2-7777-465F-B2CF-A3364C5CE6A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7C7CCA2-7777-465F-B2CF-A3364C5CE6A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7C7CCA2-7777-465F-B2CF-A3364C5CE6A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7C7CCA2-7777-465F-B2CF-A3364C5CE6A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39FC718D-8658-40B2-BDC7-19FE8DF9F8D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39FC718D-8658-40B2-BDC7-19FE8DF9F8D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39FC718D-8658-40B2-BDC7-19FE8DF9F8D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39FC718D-8658-40B2-BDC7-19FE8DF9F8D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F562C6C-64A6-49DD-8A2F-A41DEFC68D45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F562C6C-64A6-49DD-8A2F-A41DEFC68D45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F562C6C-64A6-49DD-8A2F-A41DEFC68D45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F562C6C-64A6-49DD-8A2F-A41DEFC68D45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{021F2EC8-6C48-497C-A51A-9CC8AD7ABB5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{021F2EC8-6C48-497C-A51A-9CC8AD7ABB5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{021F2EC8-6C48-497C-A51A-9CC8AD7ABB5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{021F2EC8-6C48-497C-A51A-9CC8AD7ABB5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD067A00-53BE-44FC-8247-4B6771C75EC6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD067A00-53BE-44FC-8247-4B6771C75EC6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD067A00-53BE-44FC-8247-4B6771C75EC6}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{CD067A00-53BE-44FC-8247-4B6771C75EC6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD067A00-53BE-44FC-8247-4B6771C75EC6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD067A00-53BE-44FC-8247-4B6771C75EC6}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2D433D8F-6217-4293-862A-A51FCD257D94}
+	EndGlobalSection
+EndGlobal

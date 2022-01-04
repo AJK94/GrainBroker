@@ -1,0 +1,6 @@
+﻿CREATE TABLE Customer(
+Id             UNIQUEIDENTIFIER NOT NULL,
+LocationId     UNIQUEIDENTIFIER	NOT NULL
+CONSTRAINT PK_Customer PRIMARY KEY (Id)
+CONSTRAINT FK_Customer_Location FOREIGN KEY (LocationId) REFERENCES Location(Id)
+);
