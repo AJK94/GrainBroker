@@ -26,4 +26,13 @@
     <ProjectReference Include="..\GrainBroker.API\GrainBroker.API.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Services\ImportData\CompatibleDataset.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Services\ImportData\IncompatibleDataset.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

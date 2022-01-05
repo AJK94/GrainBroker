@@ -60,6 +60,8 @@ I have decided to split the data into the following tables PurchaseOrder, Custom
 A purchase order will have one customer and one supplier.
 
 Both a supplier and customer will have a location each. 
+
+To recreate the database, you will need to create a new SQL database [GrainBroker] and then run the scripts located at Grainboker.Database/Tables
 </p>
 </details>
 
@@ -68,8 +70,15 @@ Both a supplier and customer will have a location each.
 Domain
 </summary>
 <p>
- Why did I choose EF? works well with sql/.net we don't need to create complex queries - could implement sql dependency for live updates. Create a repository? 
-</p>
+The domain uses Entity Framework to connect to the database. All queries to the database through EF use linq as they’re aren’t any complex queries.
+If complex queries were required, stored procedures could be considered. 
+
+If the client would like live updates on the front end we could consider using SQL dependency
+SQL Dependency would allow us to update the front end everytime a new order is inserted.
+
+A repository pattern is used so that all data access logic is isolated from the services project. 
+This would mean that the services project can be strictly business logic and also allow us to test every project in isolation.
+ </p>
 </details>
 
 <details>
@@ -77,12 +86,16 @@ Domain
 Servies
 </summary>
 <p>
-The services project is where we will be completing most of our business logic and data transformation  (as the charts may require different structures than the database).
+The services project is where we will be completing most of our business logic and data transformation (as the charts may require different structures than the database table structure).
 
-The services will also contain the cache service which utilises Redis. This service will be used to cache large database requests e.g. get all orders, this will reduce the hit rate on the database.
-We can update the cache on a timer e.g. every 15 minutes or we could use SQL dependency to update the cache whenever a new order is entered. 
-While updating the cache with database updates we can also use Signal R to update the front end without the user having to refresh
+The services project could also contain the cache service which utilises Redis. This service will be used to cache large database requests e.g. get all orders
+Caching this data will reduce the hit rate on the database.
+We can update the cache on a timer e.g. every 15 minutes or we could use SQL dependency to update the cache whenever a new order is inserted. 
+The choice of timer or on insert is dependent on if the client wants live updates.  
+The caching may not be required dependent on how many users are using the system. If there's only one user it would be fine to go directly to the database for every request.
 
+While updating the cache with database updates we can also use Signal R to update the front end without the user having to refresh.
+Live updates may not be required if orders are not inserted often. 
 </p>
 </details>
 
@@ -93,9 +106,10 @@ API
 <p>
 The API is a simple .net 6 API, this was chosen as it's easy to set up, easy to maintain and .net 6 has a long support lifetime. 
 
-The API has one endpoint setup for all purchase order information. With further investigation into the front end needs we can easily make more endpoints to provide more functionality.
+The API has one endpoint setup for all purchase order information. 
+With further investigation into what the client wants for the front end needs we can easily make more endpoints to provide more functionality.
 
-The API currently has no authentication but we could easily add RBAC using Microsoft Identity 
+The API currently has no authentication but we could easily add RBAC using Microsoft Identity.
 </p>
 </details>
 
@@ -104,7 +118,8 @@ The API currently has no authentication but we could easily add RBAC using Micro
 Front End 
 </summary>
 <p>
-The front end will be written in Vue, Vue is great for small to medium size projects as it's lightweight, easy to set up and easy to learn (especially for developers who have used other javascript frameworks).
+The front end will be written in Vue.
+Vue is great for small to medium size projects as it's lightweight, easy to set up and easy to learn (especially for developers who have used other javascript frameworks).
 
 We will use the vuetify component library, this library will speed up development time and add consistency to the project. 
 Vuetify also easily allows us to display data tables which will be useful for showing orders.
@@ -116,7 +131,9 @@ Using this library will give us a fast and easy way to create all the charts tha
 
 I will use Axios to consume the API. Axios is built into Vue and is easy to use. 
 
-Depending on the client needs, we can add signal R for live updates.
+Vue also has a built in state manager so if we added authentication we could store log in details and roles easily.
+
+Depending on the client needs, we can add signal R for live updates (This is discussed in more detail in the Services README).
 </p>
 </details>
 
@@ -126,6 +143,8 @@ Importer
 </summary>
 <p>
 The importer is a worker service written in .net 6, this could be run when ad hoc or on a schedule using a cron job.
+
+The importer currently just pulls from a CSV in GrainBroker.Importer/ImportData and uses the CSVHelper library to import the data.
 
 We could also easily convert this functionality into a front end CSV uploader or manul front end input.
 </p>

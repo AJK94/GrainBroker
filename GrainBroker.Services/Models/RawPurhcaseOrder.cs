@@ -1,8 +1,8 @@
 ﻿using CsvHelper.Configuration.Attributes;
 
-namespace GrainBroker.Importer
+namespace GrainBroker.Services.Models
 {
-    public class RawOrder
+    public class RawPurhcaseOrder
     {
         [Name("Order Date")]
         public DateTime OrderDate { get; set; }

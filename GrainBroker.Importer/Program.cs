@@ -13,15 +13,16 @@ IHost host = Host.CreateDefaultBuilder(args)
         IConfiguration configuration = hostContext.Configuration;
       
         services.AddDbContext<Context>(options =>
-             options.UseSqlServer(hostContext.Configuration.GetConnectionString("GrainBrokerDb")), ServiceLifetime.Singleton);
-        services.AddSingleton<IRepository<PurchaseOrder>, PurchaseOrderRepository>();
-        services.AddSingleton<IRepository<Customer>, CustomerRepository>();
-        services.AddSingleton<IRepository<Supplier>, SupplierRepository>();
-        services.AddSingleton<IRepository<Location>, LocationRepository>();
-        services.AddSingleton<IPurchaseOrderService, PurchaseOrderService>();
-        services.AddSingleton<ILocationService, LocationService>();
-        services.AddSingleton<ISupplierService, SupplierService>();
-        services.AddSingleton<ICustomerService, CustomerService>();
+             options.UseSqlServer(hostContext.Configuration.GetConnectionString("GrainBrokerDb")), ServiceLifetime.Scoped);
+        services.AddScoped<IRepository<PurchaseOrder>, PurchaseOrderRepository>();
+        services.AddScoped<IRepository<Customer>, CustomerRepository>();
+        services.AddScoped<IRepository<Supplier>, SupplierRepository>();
+        services.AddScoped<IRepository<Location>, LocationRepository>();
+        services.AddScoped<IImportService, ImportService>();
+        services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
+        services.AddScoped<ILocationService, LocationService>();
+        services.AddScoped<ISupplierService, SupplierService>();
+        services.AddScoped<ICustomerService, CustomerService>();
     })
     .Build();
 

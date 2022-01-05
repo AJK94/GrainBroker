@@ -17,4 +17,10 @@
     <ProjectReference Include="..\GrainBroker.Domain\GrainBroker.Domain.csproj" />
     <ProjectReference Include="..\GrainBroker.Services\GrainBroker.Services.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ImportData\dataset.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
