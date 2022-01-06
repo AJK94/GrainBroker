@@ -38,7 +38,7 @@ namespace GrainBroker.Tests.Services
         }
 
         [Fact]
-        public void GetSuppliers()
+        public async void GetSuppliers()
         {
             var expectedResult = new List<Supplier>{
                 new Supplier {
@@ -49,9 +49,9 @@ namespace GrainBroker.Tests.Services
 
             _mockSupplierRepository
                 .Setup(x => x.GetAll())
-                .Returns(expectedResult);
+                .ReturnsAsync(expectedResult);
 
-            var result = _supplierService.GetSuppliers();
+            var result = await _supplierService.GetSuppliers();
 
             Assert.Equal(expectedResult, result.ToList());
         }
@@ -68,9 +68,30 @@ namespace GrainBroker.Tests.Services
 
             _mockSupplierRepository
                 .Setup(x => x.GetAll())
-                .Returns(expectedResult);
+                .ReturnsAsync(expectedResult);
 
             _supplierService.CreateIfNotExist("Penrith", Guid.NewGuid());
+        }
+
+        [Fact]
+        public async void Insert_Already_Exists()
+        {
+            var existingId = Guid.NewGuid();
+
+            var expectedResult = new Supplier
+            {
+                Id = existingId,
+                LocationId = Guid.NewGuid()
+
+            };
+
+            _mockSupplierRepository
+                .Setup(x => x.GetById(It.IsAny<Guid>()))
+                .ReturnsAsync(expectedResult);
+
+            var result = await _supplierService.CreateIfNotExist("Penrith", existingId);
+
+            Assert.Equal(existingId, result.Id);
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using GrainBroker.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GrainBroker.Domain.Repository
 {
-    public class LocationRepository : IRepository<Location>
+    public class LocationRepository : ILocationRepository
     {
         private readonly Context _context;
         public LocationRepository(Context context)
@@ -15,15 +16,26 @@ namespace GrainBroker.Domain.Repository
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public IEnumerable<Location> GetAll()
+        public async Task<IEnumerable<Location>> GetAll()
         {
-            return _context.Location.AsEnumerable();
+            return await _context.Location.ToListAsync();
         }
 
-        public void Insert(Location location)
+        public async Task<Location?> GetById(Guid id)
         {
-            _context.Location.Add(location);
-            _context.SaveChanges();
+            return await _context.Location.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<Location?> GetByLocation(string name)
+        {
+            return await _context.Location.FirstOrDefaultAsync(x => x.Name == name);
+        }
+
+        public async Task<Location> Insert(Location location)
+        {
+            await _context.Location.AddAsync(location);
+            await _context.SaveChangesAsync();
+            return location; 
         }
     }
 }

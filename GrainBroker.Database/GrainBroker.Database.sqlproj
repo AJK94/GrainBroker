@@ -68,6 +68,9 @@
     <None Include="Tables\Location.sql" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="Tables\Customer.sql" />
+    <None Include="Tables\Customer.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Tables\Import.sql" />
   </ItemGroup>
 </Project>

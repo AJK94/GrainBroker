@@ -8,13 +8,13 @@ namespace GrainBroker.Services.Interfaces
         /// Gets all customers
         /// </summary>
         /// <returns>An IEnumerable of suppliers</returns>
-        IEnumerable<Supplier> GetSuppliers();
+        Task<IEnumerable<Supplier>> GetSuppliers();
 
         /// <summary>
         /// Creates a new supplier 
         /// </summary>
         /// <param name="location">The supplier location</param>
         /// <param name="id">The supplier id</param>
-        void CreateIfNotExist(string location, Guid id);
+        Task<Supplier> CreateIfNotExist(string location, Guid id);
     }
 }

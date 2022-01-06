@@ -2,25 +2,27 @@
 
 namespace GrainBroker.Services.Models
 {
-    public class RawPurhcaseOrder
+    public class RawPurchaseOrderDTO
     {
         [Name("Order Date")]
         public DateTime OrderDate { get; set; }
         [Name("Purchase Order")]
         public Guid PurchaseOrder { get; set; }
         [Name("Customer ID")]
-        public Guid CustomerID { get; set; }
+        public Guid CustomerId { get; set; }
         [Name("Customer Location")]
         public string CustomerLocation { get; set; }
         [Name("Order Req Amt (Ton)")]
         public int OrderReqAmtTon { get; set; }
         [Name("Fullfilled By ID")]
-        public Guid FullfilledByID { get; set; }
+        public Guid FullfilledById { get; set; }
         [Name("Fullfilled By Location")]
         public string FullfilledByLocation { get; set; }
         [Name("Supplied Amt (Ton)")]
         public int SuppliedAmtTon { get; set; }
         [Name("Cost Of Delivery ($)")]
         public decimal CostOfDelivery { get; set; }
+        [Ignore]
+        public Guid ImportId { get; set; }
     }
 }

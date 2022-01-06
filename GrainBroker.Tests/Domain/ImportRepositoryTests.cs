@@ -17,13 +17,13 @@ using Xunit;
 
 namespace GrainBroker.Tests.Domain
 {
-    public class LocationRepositoryTests
+    public class ImportRepositoryTests
     {
         Context _context;
-        LocationRepository _locationRepository;
+        ImportRepository _importRepository;
         InMemoryContextSeeder _contextSeeder;
 
-        public LocationRepositoryTests()
+        public ImportRepositoryTests()
         {
             var options = new DbContextOptionsBuilder<Context>()
                  .EnableSensitiveDataLogging()
@@ -31,7 +31,7 @@ namespace GrainBroker.Tests.Domain
                  .Options;
             _context = new Context(options);
 
-            _locationRepository = new LocationRepository(_context);
+            _importRepository = new ImportRepository(_context);
 
             _contextSeeder = new InMemoryContextSeeder(_context);
 
@@ -42,51 +42,48 @@ namespace GrainBroker.Tests.Domain
         [Fact]
         public void RepositoryConstructorExceptions()
         {
-            Assert.Throws<ArgumentNullException>(() => new LocationRepository(null));
+            Assert.Throws<ArgumentNullException>(() => new ImportRepository(null));
         }
 
         [Fact]
         public async void GetAll()
         {
-            var locations = await _locationRepository.GetAll();
-            Assert.Equal(2, locations.Count());
+            var imports = await _importRepository.GetAll();
+            Assert.Single(imports);
+            var import = imports.FirstOrDefault();
+            Assert.NotNull(import);
+            Assert.Equal("TestFile.csv", import.FileName);
+            Assert.Single(import.PurchaseOrders);
+
         }
-        
+
         [Fact]
         public async void GetExistingById()
         {
-            var location = await _locationRepository.GetById(new Guid("91ea35a2-39d2-4e1d-a2c8-7ffb771b99ae"));
+            var import = await _importRepository.GetById(new Guid("3abd1602-b0bf-495a-b833-e158ca28ff13"));
 
-            Assert.Equal("Penrith", location?.Name);
-        }
-
-        [Fact]
-        public async void GetExistingLocation()
-        {
-            var location = await _locationRepository.GetByLocation("Penrith");
-
-            Assert.Equal(new Guid("91ea35a2-39d2-4e1d-a2c8-7ffb771b99ae"), location?.Id);
+            Assert.Equal("TestFile.csv", import?.FileName);
         }
 
         [Fact]
         public async void GetNonExistingById()
         {
-            var location = await _locationRepository.GetById(Guid.NewGuid());
+            var import = await _importRepository.GetById(Guid.NewGuid());
 
-            Assert.Null(location);
+            Assert.Null(import);
         }
-
 
         [Fact]
         public async void Insert()
         {
-            _locationRepository.Insert(new Location
+            _importRepository.Insert(new Import
             {
                 Id = Guid.NewGuid(),
-                Name = "Kendal"
-            });
-            var locations = await _locationRepository.GetAll();
-            Assert.Equal(3, locations.Count());
+                FileName = "New.csv",
+                ImportDate = DateTime.Now
+            }); 
+            var imports = await _importRepository.GetAll();
+            Assert.Equal(2, imports.Count());
         }
     }
 }

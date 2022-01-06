@@ -16,15 +16,15 @@ namespace GrainBroker.Importer
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-
-            using (var reader = new StreamReader("ImportData/dataset.csv"))
+            var fileName = "ImportData/dataset.csv";
+            using (var reader = new StreamReader(fileName))
             {
                 using (IServiceScope scope = _serviceProvider.CreateScope())
                 {
                     IImportService importService =
                         scope.ServiceProvider.GetRequiredService<IImportService>();
 
-                    var recordCount = await importService.ImportPurchaseOrderCsv(reader);
+                    var recordCount = await importService.ImportPurchaseOrderCsv(reader, fileName);
 
                     _logger.LogInformation($"{recordCount} purchase orders imported.");
                 }

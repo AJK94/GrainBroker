@@ -3,6 +3,7 @@ using GrainBroker.Domain.Models;
 using GrainBroker.Domain.Repository;
 using GrainBroker.Services;
 using GrainBroker.Services.Interfaces;
+using GrainBroker.Services.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -40,7 +41,7 @@ namespace GrainBroker.Tests.Services
         }
 
         [Fact]
-        public void GetPurchaseOrders()
+        public async void GetPurchaseOrders()
         {
             var expectedResult = new List<PurchaseOrder>{
                 new PurchaseOrder {
@@ -56,44 +57,179 @@ namespace GrainBroker.Tests.Services
 
             _mockPurchaseOrderRepository
                 .Setup(x => x.GetAll())
-                .Returns(expectedResult);
+                .ReturnsAsync(expectedResult);
 
-            var result = _purchaseOrderService.GetPurchaseOrders();
+            var result = await _purchaseOrderService.GetPurchaseOrders();
 
             Assert.Equal(expectedResult, result.ToList());
         }
 
         [Fact]
-        public void InsertNewPurchaseOrder()
+        public async void InsertNewPurchaseOrder()
         {
-            var expectedResult = new List<PurchaseOrder>{
-                new PurchaseOrder {
-                    Id = Guid.NewGuid(),
-                    CustomerId = Guid.NewGuid(),
-                    SupplierId = Guid.NewGuid(),
-                    DeliveryCost = 5,
-                    OrderDate = DateTime.Now,
-                    RequiredAmount = 10,
-                    SuppliedAmount = 10
-                }
+            var expectedInsert = new PurchaseOrder
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = Guid.NewGuid(),
+                SupplierId = Guid.NewGuid(),
+                DeliveryCost = 5,
+                OrderDate = DateTime.Now,
+                RequiredAmount = 10,
+                SuppliedAmount = 10
             };
 
             _mockPurchaseOrderRepository
-                .Setup(x => x.GetAll())
-                .Returns(expectedResult);
+                .Setup(x => x.Insert(It.IsAny<PurchaseOrder>()))
+                .ReturnsAsync(expectedInsert);
 
-            _purchaseOrderService.Insert(new GrainBroker.Services.Models.PurchaseOrder
+            var insertedPurhcaseOrder = await _purchaseOrderService.Insert(new PurchaseOrderDTO
             {
-                PurchaseOrderId = Guid.NewGuid(),
-                FullfilledByID = Guid.NewGuid(),
+                PurchaseOrderId = expectedInsert.Id,
+                FullfilledById = expectedInsert.SupplierId,
                 FullfilledByLocation = "Chicago",
-                CustomerID = Guid.NewGuid(),
-                CustomerLocation= "Texas",
+                CustomerId = expectedInsert.CustomerId,
+                CustomerLocation = "Texas",
                 CostOfDelivery = 5,
                 OrderDate = DateTime.Now,
                 OrderReqAmtTon = 10,
                 SuppliedAmtTon = 10
             });
+
+            Assert.Equal(expectedInsert.Id, insertedPurhcaseOrder.Id);
+        }
+
+        [Fact]
+        public async void InsertExistingPurchaseOrder()
+        {
+            var expectedOrder = new PurchaseOrder
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = Guid.NewGuid(),
+                SupplierId = Guid.NewGuid(),
+                DeliveryCost = 5,
+                OrderDate = DateTime.Now,
+                RequiredAmount = 10,
+                SuppliedAmount = 10
+            };
+           
+
+            _mockPurchaseOrderRepository
+                .Setup(x => x.GetById(It.IsAny<Guid>()))
+                .ReturnsAsync(expectedOrder);
+
+         
+            var insertedPurhcaseOrder = await _purchaseOrderService.Insert(new PurchaseOrderDTO
+            {
+                PurchaseOrderId = expectedOrder.Id,
+                FullfilledById = expectedOrder.SupplierId,
+                FullfilledByLocation = "Chicago",
+                CustomerId = expectedOrder.CustomerId,
+                CustomerLocation = "Texas",
+                CostOfDelivery = 5,
+                OrderDate = DateTime.Now,
+                OrderReqAmtTon = 10,
+                SuppliedAmtTon = 10
+            });
+
+            Assert.Equal(expectedOrder.Id, insertedPurhcaseOrder.Id);
+        }
+
+        [Fact]
+        public async void GetOrdersGroupedByCustomer()
+        {
+            var customer = new Customer
+            {
+                Id = Guid.NewGuid(),
+                Location = new Location
+                {
+                    Name = "Penrith"
+                }
+
+            };
+
+            var expectedResult = new List<PurchaseOrder>{
+                new PurchaseOrder {
+                    Id = Guid.NewGuid(),
+                    CustomerId = customer.Id,
+                    SupplierId = Guid.NewGuid(),
+                    DeliveryCost = 5,
+                    OrderDate = DateTime.Now,
+                    RequiredAmount = 10,
+                    SuppliedAmount = 5,
+                    Customer = customer
+                },
+                 new PurchaseOrder {
+                    Id = Guid.NewGuid(),
+                    CustomerId = customer.Id,
+                    SupplierId = Guid.NewGuid(),
+                    DeliveryCost = 5,
+                    OrderDate = DateTime.Now,
+                    RequiredAmount = 10,
+                    SuppliedAmount = 5,
+                    Customer = customer
+                }
+            };
+
+            _mockPurchaseOrderRepository
+            .Setup(x => x.GetAll())
+            .ReturnsAsync(expectedResult);
+
+            var ordersGrouped = await _purchaseOrderService.GetOrdersGroupedByCustomer();
+
+            Assert.Single(ordersGrouped);
+            var groupedOrdersForCustomer = ordersGrouped.FirstOrDefault();
+            Assert.Equal(customer.Id, groupedOrdersForCustomer.CustomerId);
+            Assert.Equal(10, groupedOrdersForCustomer.SuppliedAmountTotal);
+            Assert.Equal(20, groupedOrdersForCustomer.RequiredAmountTotal);
+        }
+
+        [Fact]
+        public async void GetOrdersGroupedBySupplier()
+        {
+            var supplier = new Supplier
+            {
+                Id = Guid.NewGuid(),
+                Location = new Location
+                {
+                    Name = "Penrith"
+                }
+
+            };
+
+            var expectedResult = new List<PurchaseOrder>{
+                new PurchaseOrder {
+                    Id = Guid.NewGuid(),
+                    SupplierId = supplier.Id,
+                    CustomerId = Guid.NewGuid(),
+                    DeliveryCost = 5,
+                    OrderDate = DateTime.Now,
+                    RequiredAmount = 10,
+                    SuppliedAmount = 5,
+                    Supplier = supplier
+                },
+                 new PurchaseOrder {
+                    Id = Guid.NewGuid(),
+                    SupplierId = supplier.Id,
+                    CustomerId = Guid.NewGuid(),
+                    DeliveryCost = 5,
+                    OrderDate = DateTime.Now,
+                    RequiredAmount = 10,
+                    SuppliedAmount = 5,
+                    Supplier = supplier
+                }
+            };
+
+            _mockPurchaseOrderRepository
+            .Setup(x => x.GetAll())
+            .ReturnsAsync(expectedResult);
+
+            var ordersGrouped = await _purchaseOrderService.GetOrdersGroupedBySupplier();
+
+            Assert.Single(ordersGrouped);
+            var groupedOrdersForSupplier = ordersGrouped.FirstOrDefault();
+            Assert.Equal(supplier.Id, groupedOrdersForSupplier.SupplierId);
+            Assert.Equal(10, groupedOrdersForSupplier.SuppliedAmountTotal);
+            Assert.Equal(20, groupedOrdersForSupplier.RequiredAmountTotal);
         }
     }
 }

@@ -8,11 +8,24 @@ namespace GrainBroker.Services.Interfaces
         /// Gets all purchase orders
         /// </summary>
         /// <returns>An IEnumerable of PurchaseOrder</returns>
-        IEnumerable<PurchaseOrder> GetPurchaseOrders();
+        Task<IEnumerable<PurchaseOrder>> GetPurchaseOrders();
+
         /// <summary>
         /// Insert a new purhcase order
         /// </summary>
         /// <param name="purchaseOrder">The new purchase order</param>
-        void Insert(Models.PurchaseOrder purchaseOrder);
+        Task<PurchaseOrder> Insert(Models.PurchaseOrderDTO purchaseOrder);
+
+        /// <summary>
+        /// Get all orders grouped by customer 
+        /// </summary>
+        /// <returns>An IEnumerable of PurchaseOrderGroupedByCustomer</returns>
+        Task<IEnumerable<Models.PurchaseOrderGroupedByCustomerDTO>> GetOrdersGroupedByCustomer();
+
+        /// <summary>
+        /// Get all orders grouped by customer 
+        /// </summary>
+        /// <returns>An IEnumerable of PurchaseOrderGroupedByCustomer</returns>
+        Task<IEnumerable<Models.PurchaseOrderGroupedBySupplierDTO>> GetOrdersGroupedBySupplier();
     }
 }

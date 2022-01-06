@@ -20,25 +20,26 @@ namespace GrainBroker.Services
             _locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
         }
 
-        public IEnumerable<Supplier> GetSuppliers()
+        public async Task<IEnumerable<Supplier>> GetSuppliers()
         {
-            return _supplierRepository.GetAll();
+            return await _supplierRepository.GetAll();
         }
 
-        public void CreateIfNotExist(string location, Guid id)
+        public async Task<Supplier> CreateIfNotExist(string location, Guid id)
         {
-            var existingSupplier = GetSuppliers().FirstOrDefault(x => x.Id == id);
+            var existingSupplier = await _supplierRepository.GetById(id);
 
             if (existingSupplier == null)
             {
                 var supplier = new Supplier
                 {
                     Id = id,
-                    LocationId = _locationService.CreateOrReturnExistingId(location)
+                    LocationId = await _locationService.CreateOrReturnExistingId(location)
                 };
 
-                _supplierRepository.Insert(supplier);
+                return await _supplierRepository.Insert(supplier);
             }
+            return existingSupplier;
         }
     }
 }

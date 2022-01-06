@@ -16,20 +16,26 @@ namespace GrainBroker.Domain.Repository
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public IEnumerable<PurchaseOrder> GetAll()
+        public async Task<IEnumerable<PurchaseOrder>> GetAll()
         {
-            return _context.PurchaseOrder
+            return await _context.PurchaseOrder
                 .Include(x => x.Customer)
                 .ThenInclude(x => x.Location)
                 .Include(x => x.Supplier)
                 .ThenInclude(x => x.Location)
-                .AsEnumerable();
+                .ToListAsync();
         }
 
-        public void Insert(PurchaseOrder purchaseOrder)
+        public async Task<PurchaseOrder?> GetById(Guid id)
         {
-            _context.PurchaseOrder.Add(purchaseOrder);
-            _context.SaveChanges();
+            return await _context.PurchaseOrder.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<PurchaseOrder> Insert(PurchaseOrder purchaseOrder)
+        {
+            await _context.PurchaseOrder.AddAsync(purchaseOrder);
+            await _context.SaveChangesAsync();
+            return purchaseOrder;
         }       
     }
 }

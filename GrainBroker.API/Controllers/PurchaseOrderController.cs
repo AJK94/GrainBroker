@@ -19,12 +19,39 @@ namespace GrainBroker.Controllers
             _purchaseOrderService = purchaseOrderService ?? throw new ArgumentNullException(nameof(purchaseOrderService));
         }
 
-        [HttpGet(Name = "GetPurchaseOrders")]
-        public IActionResult GetPurchaseOrders()
+        [HttpGet("GetPurchaseOrders")]
+        public async Task<IActionResult> GetPurchaseOrders()
         {
             try
             {
-                return Ok(_purchaseOrderService.GetPurchaseOrders());
+                return Ok(await _purchaseOrderService.GetPurchaseOrders());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+        [HttpGet("GetOrdersGroupedByCustomer")]
+        public async Task<IActionResult> GetOrdersGroupedByCustomer()
+        {
+            try
+            {
+                return Ok(await _purchaseOrderService.GetOrdersGroupedByCustomer());
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet("GetOrdersGroupedBySupplier")]
+        public async Task<IActionResult> GetOrdersGroupedBySupplier()
+        {
+            try
+            {
+                return Ok(await _purchaseOrderService.GetOrdersGroupedBySupplier());
             }
             catch (Exception ex)
             {

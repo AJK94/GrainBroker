@@ -11,6 +11,7 @@ namespace GrainBroker.Domain.Models
     public class PurchaseOrder
     {
         public Guid Id { get; set; }
+        public Guid ImportId { get; set; }
         public DateTime OrderDate { get; set; }
         public Guid CustomerId { get; set; }
         public Guid SupplierId { get; set; }

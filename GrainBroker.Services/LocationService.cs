@@ -11,20 +11,21 @@ namespace GrainBroker.Services
 {
     public class LocationService : ILocationService
     {
-        private readonly IRepository<Location> _locationRepository;
+        private readonly ILocationRepository _locationRepository;
 
-        public LocationService(IRepository<Location> locationRepository)
+        public LocationService(ILocationRepository locationRepository)
         {
             _locationRepository = locationRepository ?? throw new ArgumentNullException(nameof(locationRepository));
         }
 
-        public IEnumerable<Location> GetLocations()
+        public async Task<IEnumerable<Location>> GetLocations()
         {
-            return _locationRepository.GetAll();
+            return await _locationRepository.GetAll();
         }
-        public Guid CreateOrReturnExistingId(string location)
+
+        public async Task<Guid> CreateOrReturnExistingId(string location)
         {
-            var existingLocation = GetLocations().FirstOrDefault(x => x.Name == location);
+            var existingLocation = await _locationRepository.GetByLocation(location);
 
             if (existingLocation == null)
             {
@@ -34,7 +35,7 @@ namespace GrainBroker.Services
                     Name = location
                 };
 
-                _locationRepository.Insert(newLocation);
+                newLocation = await _locationRepository.Insert(newLocation);
 
                 return newLocation.Id;
             }

@@ -46,22 +46,38 @@ namespace GrainBroker.Tests.Domain
         }
 
         [Fact]
-        public void GetAll()
+        public async void GetAll()
         {
-            var suppliers = _supplierRepository.GetAll();
+            var suppliers = await _supplierRepository.GetAll();
             Assert.Single(suppliers);
             Assert.Equal("Carlisle", suppliers.FirstOrDefault().Location.Name);
         }
 
         [Fact]
-        public void Insert()
+        public async void GetExistingById()
+        {
+            var supplier = await _supplierRepository.GetById(new Guid("5658b3ed-107b-43ac-910c-46dfc69883f2"));
+
+            Assert.Equal(new Guid("cdf2766a-7618-4dd8-bdfd-9a5ee5436a8f"), supplier?.LocationId);
+        }
+
+        [Fact]
+        public async void GetNonExistingById()
+        {
+            var supplier = await _supplierRepository.GetById(Guid.NewGuid());
+
+            Assert.Null(supplier);
+        }
+
+        [Fact]
+        public async void Insert()
         {
             _supplierRepository.Insert(new Supplier
             {
                 Id = Guid.NewGuid(),
                 LocationId = new Guid("91ea35a2-39d2-4e1d-a2c8-7ffb771b99ae")
             }); 
-            var suppliers = _supplierRepository.GetAll();
+            var suppliers = await _supplierRepository.GetAll();
             Assert.Equal(2, suppliers.Count());
         }
     }

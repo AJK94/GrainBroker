@@ -17,7 +17,8 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IRepository<PurchaseOrder>, PurchaseOrderRepository>();
         services.AddScoped<IRepository<Customer>, CustomerRepository>();
         services.AddScoped<IRepository<Supplier>, SupplierRepository>();
-        services.AddScoped<IRepository<Location>, LocationRepository>();
+        services.AddScoped<ILocationRepository, LocationRepository>();
+        services.AddScoped<IRepository<Import>, ImportRepository>();
         services.AddScoped<IImportService, ImportService>();
         services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
         services.AddScoped<ILocationService, LocationService>();

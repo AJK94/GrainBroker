@@ -1,4 +1,5 @@
 ﻿using GrainBroker.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,15 +16,21 @@ namespace GrainBroker.Domain.Repository
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public IEnumerable<Customer> GetAll()
+        public async Task<IEnumerable<Customer>> GetAll()
         {
-            return _context.Customer.AsEnumerable();
+            return await _context.Customer.ToListAsync();
         }
 
-        public void Insert(Customer customer)
+        public async Task<Customer?> GetById(Guid id)
         {
-            _context.Customer.Add(customer);
-            _context.SaveChanges();
+            return await _context.Customer.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<Customer> Insert(Customer customer)
+        {
+            await _context.Customer.AddAsync(customer);
+            await _context.SaveChangesAsync();
+            return customer;
         }
     }
 }

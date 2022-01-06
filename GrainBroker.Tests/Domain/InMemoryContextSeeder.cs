@@ -18,6 +18,13 @@ namespace GrainBroker.Tests.Domain
 
         public void SeedContext()
         {
+            var import = new Import
+            {
+                Id = new Guid("3abd1602-b0bf-495a-b833-e158ca28ff13"),
+                FileName = "TestFile.csv",
+                ImportDate = DateTime.Now
+
+            };
             var purchaseOrders = new PurchaseOrder
             {
                 Id = new Guid("72bab322-2016-4cbd-91e6-16018b263118"),
@@ -26,7 +33,9 @@ namespace GrainBroker.Tests.Domain
                 DeliveryCost = 5,
                 OrderDate = DateTime.Now,
                 RequiredAmount = 10,
-                SuppliedAmount = 10
+                SuppliedAmount = 10,
+                ImportId = new Guid("3abd1602-b0bf-495a-b833-e158ca28ff13")
+
             };
             var locations = new List<Location>
             {
@@ -51,6 +60,7 @@ namespace GrainBroker.Tests.Domain
                 Id = new Guid("5658b3ed-107b-43ac-910c-46dfc69883f2"),
                 LocationId = new Guid("cdf2766a-7618-4dd8-bdfd-9a5ee5436a8f")
             };
+            _context.Import.Add(import);
             _context.Location.AddRange(locations);
             _context.Customer.Add(customer);
             _context.Supplier.Add(supplier);

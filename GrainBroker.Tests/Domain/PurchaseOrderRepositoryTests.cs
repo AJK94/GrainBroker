@@ -46,16 +46,32 @@ namespace GrainBroker.Tests.Domain
         }
 
         [Fact]
-        public void GetAll()
+        public async void GetAll()
         {
-            var orders = _purchaseOrderRepository.GetAll();
+            var orders = await _purchaseOrderRepository.GetAll();
             Assert.Single(orders);
-            Assert.Equal("Penrith", orders.FirstOrDefault().Customer.Location.Name);
-            Assert.Equal("Carlisle", orders.FirstOrDefault().Supplier.Location.Name);
+            Assert.Equal("Penrith", orders.FirstOrDefault()?.Customer.Location.Name);
+            Assert.Equal("Carlisle", orders.FirstOrDefault()?.Supplier.Location.Name);
         }
 
         [Fact]
-        public void Insert()
+        public async void GetExistingById()
+        {
+            var order = await _purchaseOrderRepository.GetById(new Guid("72bab322-2016-4cbd-91e6-16018b263118"));
+
+            Assert.Equal(5, order?.DeliveryCost);
+        }
+
+        [Fact]
+        public async void GetNonExistingById()
+        {
+            var order = await _purchaseOrderRepository.GetById(Guid.NewGuid());
+
+            Assert.Null(order);
+        }
+
+        [Fact]
+        public async void Insert()
         {
             _purchaseOrderRepository.Insert(new PurchaseOrder
             {
@@ -67,7 +83,7 @@ namespace GrainBroker.Tests.Domain
                 RequiredAmount = 10,
                 SuppliedAmount = 10
             });
-            var orders = _purchaseOrderRepository.GetAll();
+            var orders = await _purchaseOrderRepository.GetAll();
             Assert.Equal(2, orders.Count());
         }
     }

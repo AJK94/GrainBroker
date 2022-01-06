@@ -34,43 +34,66 @@ namespace GrainBroker.Tests.Services
         {
             Assert.Throws<ArgumentNullException>(() => new CustomerService(null, _mockLocationService.Object));
             Assert.Throws<ArgumentNullException>(() => new CustomerService(_mockCustomerRepository.Object, null));
-    
+
         }
 
         [Fact]
-        public void GetCustomers()
+        public async void GetCustomers()
         {
             var expectedResult = new List<Customer>{
                 new Customer {
                     Id = Guid.NewGuid(),
-                    LocationId = Guid.NewGuid(),  
+                    LocationId = Guid.NewGuid(),
                 }
             };
 
             _mockCustomerRepository
                 .Setup(x => x.GetAll())
-                .Returns(expectedResult);
+                .ReturnsAsync(expectedResult);
 
-            var result = _customerService.GetCustomers();
+            var result = await _customerService.GetCustomers();
 
             Assert.Equal(expectedResult, result.ToList());
         }
 
         [Fact]
-        public void Insert()
+        public async void Insert()
         {
-            var expectedResult = new List<Customer>{
-                new Customer {
-                    Id = Guid.NewGuid(),
-                    LocationId = Guid.NewGuid()
-                }
+
+            var toInsertId = Guid.NewGuid();
+
+            var expectedInsert = new Customer
+            {
+                Id = toInsertId,
+                LocationId = Guid.NewGuid(),
+            };
+
+            _mockCustomerRepository.Setup(x => x.Insert(It.IsAny<Customer>())).ReturnsAsync(expectedInsert);
+
+
+            var inserted = await _customerService.CreateIfNotExist("Penrith", toInsertId);
+
+            Assert.Equal(toInsertId, inserted.Id);
+        }
+        [Fact]
+        public async void Insert_Already_Exists()
+        {
+            var existingId = Guid.NewGuid();
+
+            var expectedResult = new Customer
+            {
+                Id = existingId,
+                LocationId = Guid.NewGuid()
+
             };
 
             _mockCustomerRepository
-                .Setup(x => x.GetAll())
-                .Returns(expectedResult);
+                .Setup(x => x.GetById(It.IsAny<Guid>()))
+                .ReturnsAsync(expectedResult);
 
-            _customerService.CreateIfNotExist("Penrith", Guid.NewGuid());
+            var result = await _customerService.CreateIfNotExist("Penrith", existingId);
+
+            Assert.Equal(existingId, result.Id);
         }
     }
 }

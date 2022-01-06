@@ -25,6 +25,7 @@ namespace GrainBroker.Domain
         public DbSet<Customer> Customer { get; set; }
         public DbSet<Supplier> Supplier { get; set; }
         public DbSet<Location> Location { get; set; }
+        public DbSet<Import> Import { get; set; }  
         
     }
 }

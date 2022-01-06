@@ -19,24 +19,26 @@ namespace GrainBroker.Services
             _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
             _locationService = locationService ?? throw new ArgumentNullException(nameof(locationService));
         }
-        public IEnumerable<Customer> GetCustomers() {
-            return _customerRepository.GetAll();
+        public async Task<IEnumerable<Customer>> GetCustomers() {
+            return await _customerRepository.GetAll();
         }
 
-        public void CreateIfNotExist(string location, Guid id)
+        public async Task<Customer> CreateIfNotExist(string location, Guid id)
         {
-            var existingCustomer = GetCustomers().FirstOrDefault(x => x.Id == id);
+            var existingCustomer = await _customerRepository.GetById(id);
 
             if (existingCustomer == null)
             {
                 var customer = new Customer
                 {
                     Id = id,
-                    LocationId = _locationService.CreateOrReturnExistingId(location)
+                    LocationId = await _locationService.CreateOrReturnExistingId(location)
                 };
 
-                _customerRepository.Insert(customer);
+                return await _customerRepository.Insert(customer);
             }
+
+            return existingCustomer;
 
         }
     }

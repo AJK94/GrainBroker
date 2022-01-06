@@ -17,37 +17,67 @@ namespace GrainBroker.Services
             _customerService = customerService ?? throw new ArgumentNullException(nameof(customerService));
         }
 
-        public IEnumerable<PurchaseOrder> GetPurchaseOrders()
+        public async Task<IEnumerable<PurchaseOrder>> GetPurchaseOrders()
         {
-            return _purchaseOrderRepository.GetAll();
+            return await _purchaseOrderRepository.GetAll();
         }
 
-        public void Insert(Models.PurchaseOrder purchaseOrder)
+        public async Task<PurchaseOrder> Insert(Models.PurchaseOrderDTO purchaseOrder)
         {      
-            var existingOrder = GetPurchaseOrders().FirstOrDefault(x => x.Id == purchaseOrder.PurchaseOrderId);
+            var existingOrder = await _purchaseOrderRepository.GetById(purchaseOrder.PurchaseOrderId);
 
             if (existingOrder == null)
             {
-                _supplierService.CreateIfNotExist(purchaseOrder.FullfilledByLocation, purchaseOrder.FullfilledByID);
+                await _supplierService.CreateIfNotExist(purchaseOrder.FullfilledByLocation, purchaseOrder.FullfilledById);
 
-                _customerService.CreateIfNotExist(purchaseOrder.CustomerLocation, purchaseOrder.CustomerID);
+                await _customerService.CreateIfNotExist(purchaseOrder.CustomerLocation, purchaseOrder.CustomerId);
 
-                _purchaseOrderRepository.Insert(ToDomain(purchaseOrder));
+               return await _purchaseOrderRepository.Insert(ToDomain(purchaseOrder));
             }
+            return existingOrder;
         }
 
-        private static PurchaseOrder ToDomain(Models.PurchaseOrder purchaseOrder)
+        private static PurchaseOrder ToDomain(Models.PurchaseOrderDTO purchaseOrder)
         {
             return new PurchaseOrder()
             {
                 Id = purchaseOrder.PurchaseOrderId,
-                CustomerId = purchaseOrder.CustomerID,
-                SupplierId = purchaseOrder.FullfilledByID,
+                CustomerId = purchaseOrder.CustomerId,
+                SupplierId = purchaseOrder.FullfilledById,
                 RequiredAmount = purchaseOrder.OrderReqAmtTon,
                 SuppliedAmount = purchaseOrder.SuppliedAmtTon,
                 DeliveryCost = purchaseOrder.CostOfDelivery,
-                OrderDate = purchaseOrder.OrderDate
+                OrderDate = purchaseOrder.OrderDate,
+                ImportId = purchaseOrder.ImportId
             };
+        }
+
+        public async Task<IEnumerable<Models.PurchaseOrderGroupedByCustomerDTO>> GetOrdersGroupedByCustomer()
+        {
+            var allOrders = await _purchaseOrderRepository.GetAll();
+
+            return allOrders.GroupBy(x => x.CustomerId).Select(x => new Models.PurchaseOrderGroupedByCustomerDTO
+            {
+                CustomerId = x.FirstOrDefault().CustomerId,
+                CustomerLocation = x.FirstOrDefault().Customer.Location.Name,
+                CostOfDeliveryTotal = x.Sum(s=> s.DeliveryCost),
+                RequiredAmountTotal = x.Sum(s => s.RequiredAmount),
+                SuppliedAmountTotal = x.Sum(s => s.SuppliedAmount)
+            }); 
+        }
+
+        public async Task<IEnumerable<Models.PurchaseOrderGroupedBySupplierDTO>> GetOrdersGroupedBySupplier()
+        {
+            var allOrders = await _purchaseOrderRepository.GetAll();
+
+            return allOrders.GroupBy(x => x.SupplierId).Select(x => new Models.PurchaseOrderGroupedBySupplierDTO
+            {
+                SupplierId = x.FirstOrDefault().SupplierId,
+                SupplierLocation = x.FirstOrDefault().Supplier.Location.Name,
+                CostOfDeliveryTotal = x.Sum(s => s.DeliveryCost),
+                RequiredAmountTotal = x.Sum(s => s.RequiredAmount),
+                SuppliedAmountTotal = x.Sum(s => s.SuppliedAmount)
+            });
         }
     }
 }

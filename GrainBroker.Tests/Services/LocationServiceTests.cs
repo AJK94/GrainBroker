@@ -18,7 +18,7 @@ namespace GrainBroker.Tests.Services
 {
     public class LocationServiceTests
     {
-        private Mock<IRepository<Location>> _mockLocationRepository;
+        private Mock<ILocationRepository> _mockLocationRepository;
         private LocationService _locationService;
 
         public LocationServiceTests()
@@ -35,7 +35,7 @@ namespace GrainBroker.Tests.Services
         }
 
         [Fact]
-        public void GetLocations()
+        public async void GetLocations()
         {
             var expectedResult = new List<Location>{
                 new Location {
@@ -46,20 +46,26 @@ namespace GrainBroker.Tests.Services
 
             _mockLocationRepository
                 .Setup(x => x.GetAll())
-                .Returns(expectedResult);
+                .ReturnsAsync(expectedResult);
 
-            var result = _locationService.GetLocations();
+            var result = await _locationService.GetLocations();
 
             Assert.Equal(expectedResult, result.ToList());
         }
 
         [Fact]
-        public void CreateOrReturnExistingId_NewLocation()
+        public async void CreateOrReturnExistingId_NewLocation()
         {
             var existingLocation = new Location
             {
                 Id = Guid.NewGuid(),
                 Name = "Penrith"
+            };
+
+            var newLocation = new Location
+            {
+                Id= Guid.NewGuid(),
+                Name = "Carlisle"
             };
 
             var expectedResult = new List<Location>{
@@ -68,31 +74,31 @@ namespace GrainBroker.Tests.Services
 
             _mockLocationRepository
                 .Setup(x => x.GetAll())
-                .Returns(expectedResult);
+                .ReturnsAsync(expectedResult);
 
-            var locationId = _locationService.CreateOrReturnExistingId("Carlisle");
+            _mockLocationRepository
+             .Setup(x => x.Insert(It.IsAny<Location>()))
+             .ReturnsAsync(newLocation);
+
+            var locationId = await _locationService.CreateOrReturnExistingId(newLocation.Name);
 
             Assert.NotEqual(existingLocation.Id, locationId);
         }
 
         [Fact]
-        public void CreateOrReturnExistingId_ExistingLocation()
+        public async void CreateOrReturnExistingId_ExistingLocation()
         {
             var existingLocation = new Location
             {
                 Id = Guid.NewGuid(),
                 Name = "Penrith"
-            };
-
-            var expectedResult = new List<Location>{
-               existingLocation
-            };
+            };          
 
             _mockLocationRepository
-                .Setup(x => x.GetAll())
-                .Returns(expectedResult);
+                .Setup(x => x.GetByLocation(It.IsAny<string>()))
+                .ReturnsAsync(existingLocation);
 
-            var locationId = _locationService.CreateOrReturnExistingId("Penrith");
+            var locationId = await _locationService.CreateOrReturnExistingId("Penrith");
 
             Assert.Equal(existingLocation.Id, locationId);
         }

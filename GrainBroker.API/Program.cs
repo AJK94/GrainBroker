@@ -5,6 +5,7 @@ using GrainBroker.Services;
 using GrainBroker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -17,12 +18,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRepository<PurchaseOrder>, PurchaseOrderRepository>();
 builder.Services.AddScoped<IRepository<Customer>, CustomerRepository>();
 builder.Services.AddScoped<IRepository<Supplier>, SupplierRepository>();
-builder.Services.AddScoped<IRepository<Location>, LocationRepository>();
+builder.Services.AddScoped<ILocationRepository, LocationRepository>();
+builder.Services.AddScoped<IRepository<Import>, ImportRepository>();
 
 builder.Services.AddScoped<IPurchaseOrderService, PurchaseOrderService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IImportService, ImportService>();
 
 builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GrainBrokerDb")));
